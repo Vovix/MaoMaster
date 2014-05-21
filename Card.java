@@ -7,21 +7,17 @@
  */
 public class Card
 {
-<<<<<<< HEAD
+
     // class variables
     private static int numOfCards=0;
     // instance variables
     private int value;
     private String suit;
-=======
-    // instance variables - replace the example below with your own
-    private int x;
->>>>>>> ce391837e72ce70345cc33f099e38658fe7c7c18
 
     /**
      * Constructor for objects of class Card
      */
-<<<<<<< HEAD
+
     public Card(){
         // initialise instance variables
         value = numOfCards%13;
@@ -30,12 +26,6 @@ public class Card
         if(numOfCards/13==2) suit = "Spades";
         if(numOfCards/13==3) suit = "Clubs";
         numOfCards++;
-=======
-    public Card()
-    {
-        // initialise instance variables
-        x = 0;
->>>>>>> ce391837e72ce70345cc33f099e38658fe7c7c18
     }
 
     /**
@@ -44,7 +34,7 @@ public class Card
      * @param  y   a sample parameter for a method
      * @return     the sum of x and y 
      */
-<<<<<<< HEAD
+
     public int value(){
         //returns card value
         return value;
@@ -94,11 +84,3 @@ public class Card
         return res;
     }
 }
-=======
-    public int sampleMethod(int y)
-    {
-        // put your code here
-        return x + y;
-    }
-}
->>>>>>> ce391837e72ce70345cc33f099e38658fe7c7c18
