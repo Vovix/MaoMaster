@@ -7,7 +7,7 @@ import java.util.Scanner;
  * @author (your name) 
  * @version (a version number or a date)
  */
-public class Main
+public class Mao
 {
     // instance variables - replace the example below with your own
     // main method
