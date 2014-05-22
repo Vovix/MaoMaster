@@ -1,4 +1,5 @@
-import java.util.random;
+import java.util.Random;
+import java.util.List;
 /**
  * Write a description of class Deck here.
  * 
@@ -10,16 +11,20 @@ public class Deck
     // instance variables - replace the example below with your own
     private int size;
     private String cards;
+    private List<Card> cardList;
+    private Discard discard;
     Random rNGesus;
 
     /**
      * Constructor for objects of class Deck
      */
-    public Deck(){
+    public Deck(List<Card> cardList,Discard discard){
         // initialise instance variables
         size = 52;
-        for(i=0;i<52;i++){
-            // create a Card object and add its card.name to String cards
+        cards = "";
+        for(int i=0;i<52;i++){
+            if(size>0) cards = cards+",";
+            cards = cards+cardList.get(i).name();
         }
         rNGesus = new Random();
     }
@@ -38,9 +43,9 @@ public class Deck
             card = cards.substring(0,cards.indexOf(","));
         }
         if(card.equals("-1")){
-            if(Discard.getSize>0){
-                deck.shuffle();
-                return deck.draw;
+            if(discard.getSize()>0){
+                this.shuffle();
+                return this.draw();
             } else return "D.N.E.";
         } else {
             cards=cards.substring(cards.indexOf(","+1),cards.length());
@@ -49,18 +54,18 @@ public class Deck
         return card;
     }
     public void shuffle(){
-        size=cards+Discard.getSize();
-        cards=cards+Discard.addToDeck();
-        cardArray=cards.split(",");
-        newCardArray=new String[cardArray.length];
+        size=size+discard.getSize();
+        cards=cards+discard.addToDeck();
+        String[] cardArray=cards.split(",");
+        String[] newCardArray=new String[cardArray.length];
         int random;
-        for(i=0;i<cardArray.length;i++){
+        for(int i=0;i<cardArray.length;i++){
             random=rNGesus.nextInt(cardArray.length);
             while(cardArray[random].equals("D.N.E.")) random=rNGesus.nextInt(cardArray.length);
             newCardArray[i]=cardArray[random];
             cardArray[random].equals("D.N.E.");
         }
         cards="";
-        for(i=0;i<newCardArray.length;i++) cards=cards+","+newCardArray[i];
+        for(int i=0;i<newCardArray.length;i++) cards=cards+","+newCardArray[i];
     }
 }

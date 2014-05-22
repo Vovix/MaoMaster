@@ -1,4 +1,4 @@
-
+import java.util.List;
 /**
  * Write a description of class Discard here.
  * 
@@ -10,11 +10,13 @@ public class Discard
     // instance variables - replace the example below with your own
     private int size;
     private String cards;
+    private Deck deck;
+    private List<Card> cardList;
 
     /**
      * Constructor for objects of class Discard
      */
-    public Discard(){
+    public Discard(List<Card> cardList){
         // initialise instance variables
         size = 0;
         cards = "";
@@ -31,7 +33,7 @@ public class Discard
         cards=cards+name;
         size++;
     }
-    public String getSize(){
+    public int getSize(){
         return size;
     }
     public String addToDeck(){

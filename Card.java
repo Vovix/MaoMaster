@@ -13,6 +13,7 @@ public class Card
     // instance variables
     private int value;
     private String suit;
+    private int index; // numerical identification from 0 to 51; use cardList.get(int index) to reference cards
 
     /**
      * Constructor for objects of class Card
@@ -20,11 +21,13 @@ public class Card
 
     public Card(){
         // initialise instance variables
-        value = numOfCards%13;
+        value = (numOfCards+1)%13;
+        if(value==0) value=13;
         if(numOfCards/13==0) suit = "Hearts";
         if(numOfCards/13==1) suit = "Diamonds";
         if(numOfCards/13==2) suit = "Spades";
         if(numOfCards/13==3) suit = "Clubs";
+        index = numOfCards;
         numOfCards++;
     }
 
@@ -48,19 +51,16 @@ public class Card
         String res;
         if(value==11){
             res="J";
-        }
-        if(value==12){
+        }else if(value==12){
             res="Q";
-        }
-        if(value==13){
+        }else if(value==13){
             res="K";
-        }        
-        if(value==1){
+        }else if(value==1){
             res="A";
         }else{
             res=String.valueOf(value);
         }
-        res=res+suit;
+        res=res+suit.charAt(0);
         return res;
     }
     public String fullName(){
