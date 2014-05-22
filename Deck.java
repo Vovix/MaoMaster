@@ -20,13 +20,17 @@ public class Deck
      */
     public Deck(List<Card> cardList,Discard discard){
         // initialise instance variables
-        size = 52;
+        size = 0;
         cards = "";
+        this.discard=discard;
+        this.cardList=cardList;
         for(int i=0;i<52;i++){
             if(size>0) cards = cards+",";
-            cards = cards+cardList.get(i).name();
+            cards = cards+cardList.get(i).index;
+            size++;
         }
         rNGesus = new Random();
+        shuffle();
     }
 
     /**
@@ -35,7 +39,8 @@ public class Deck
      * @param  y   a sample parameter for a method
      * @return     the sum of x and y 
      */
-    public String draw(){
+    public String draw(Discard discard){
+        this.discard=discard;
         String card;
         if(cards.indexOf(",")==-1){
             card = "-1";
@@ -44,16 +49,17 @@ public class Deck
         }
         if(card.equals("-1")){
             if(discard.getSize()>0){
-                this.shuffle();
-                return this.draw();
+                this.shuffleIn(discard);
+                return this.draw(discard);
             } else return "D.N.E.";
         } else {
-            cards=cards.substring(cards.indexOf(","+1),cards.length());
+            cards=cards.substring(cards.indexOf(",")+1,cards.length());
             size--;
         }
         return card;
     }
-    public void shuffle(){
+    public void shuffleIn(Discard discard){
+        this.discard=discard;
         size=size+discard.getSize();
         cards=cards+discard.addToDeck();
         String[] cardArray=cards.split(",");
@@ -65,7 +71,20 @@ public class Deck
             newCardArray[i]=cardArray[random];
             cardArray[random].equals("D.N.E.");
         }
-        cards="";
-        for(int i=0;i<newCardArray.length;i++) cards=cards+","+newCardArray[i];
+        cards=newCardArray[0];
+        for(int i=1;i<newCardArray.length;i++) cards=cards+","+newCardArray[i];
+    }
+    public void shuffle(){
+        String[] cardArray=cards.split(",");
+        String[] newCardArray=new String[cardArray.length];
+        int random;
+        for(int i=0;i<cardArray.length;i++){
+            random=rNGesus.nextInt(cardArray.length);
+            while(cardArray[random].equals("D.N.E.")) random=rNGesus.nextInt(cardArray.length);
+            newCardArray[i]=cardArray[random];
+            cardArray[random].equals("D.N.E.");
+        }
+        cards=newCardArray[0];
+        for(int i=1;i<newCardArray.length;i++) cards=cards+","+newCardArray[i];
     }
 }

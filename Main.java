@@ -29,5 +29,10 @@ public class Main
             Hand newHand = new Hand(cardList,deck,discard);
             handList.add(newHand);
         }
+        System.out.println("Hand 1:");
+        System.out.println(handList.get(0).getCards());
+        System.out.println("Hand 2:");
+        System.out.println(handList.get(1).getCards());
+        System.out.println("Done.");
     }
 }

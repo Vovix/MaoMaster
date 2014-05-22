@@ -2,9 +2,11 @@
 comment0.params=cardList\ discard
 comment0.target=Deck(java.util.List,\ Discard)
 comment0.text=\r\n\ Constructor\ for\ objects\ of\ class\ Deck\r\n
-comment1.params=
-comment1.target=java.lang.String\ draw()
+comment1.params=discard
+comment1.target=java.lang.String\ draw(Discard)
 comment1.text=\r\n\ An\ example\ of\ a\ method\ -\ replace\ this\ comment\ with\ your\ own\r\n\ \r\n\ @param\ \ y\ \ \ a\ sample\ parameter\ for\ a\ method\r\n\ @return\ \ \ \ \ the\ sum\ of\ x\ and\ y\ \r\n
-comment2.params=
-comment2.target=void\ shuffle()
-numComments=3
+comment2.params=discard
+comment2.target=void\ shuffleIn(Discard)
+comment3.params=
+comment3.target=void\ shuffle()
+numComments=4

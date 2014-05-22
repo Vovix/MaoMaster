@@ -20,7 +20,10 @@ public class Hand
         // initialise instance variables
         size=0;
         cards="";
-        draw(5);
+        this.deck=deck;
+        this.discard=discard;
+        this.cardList=cardList;
+        draw(5,deck,discard);
     }
 
     /**
@@ -29,9 +32,10 @@ public class Hand
      * @param  y   a sample parameter for a method
      * @return     the sum of x and y 
      */
-    public void draw(int n){
+    public void draw(int n,Deck deck,Discard discard){
+        this.deck=deck;
         for(int i=0;i<n;i++){
-            String newCard=deck.draw();
+            String newCard=deck.draw(discard);
             if(!newCard.equals("D.N.E.")){
                 if(cards.length()>0) cards=cards+",";
                 cards=cards+newCard;

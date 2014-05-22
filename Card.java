@@ -13,7 +13,7 @@ public class Card
     // instance variables
     private int value;
     private String suit;
-    private int index; // numerical identification from 0 to 51; use cardList.get(int index) to reference cards
+    public int index; // numerical identification from 0 to 51; use cardList.get(int index) to reference cards
 
     /**
      * Constructor for objects of class Card
