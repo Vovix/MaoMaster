@@ -83,4 +83,9 @@ public class Card
         res=res+" of "+suit;
         return res;
     }
+    public int indexFromName(String testName){
+        //returns index if name matches textName, otherwise -1
+        if(this.name().equals(testName)) return index;
+        return -1;
+    }
 }

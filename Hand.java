@@ -13,6 +13,7 @@ public class Hand
     private Deck deck;
     private Discard discard;
     private List<Card> cardList;
+    public boolean hasSaidMao;
     /**
      * Constructor for objects of class Hand
      */
@@ -45,5 +46,17 @@ public class Hand
     }
     public String getCards(){
         return cards;
+    }
+    public String getCardNames(List<Card> cardList){
+        String[] cardArray=cards.split(",");
+        String cardString="";
+        for(int i=0;i<cardArray.length;i++){
+            if(cardString.length()>0)cardString=cardString+" ";
+            cardString=cardString+cardList.get(Integer.parseInt(cardArray[i])).name();
+        }
+        return cardString;
+    }
+    public int getSize(){
+        return size;
     }
 }

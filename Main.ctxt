@@ -1,4 +1,10 @@
 #BlueJ class context
 comment0.params=args
 comment0.target=void\ main(java.lang.String[])
-numComments=1
+comment1.params=cardList\ handList\ deck\ discard\ players
+comment1.target=boolean\ game(java.util.List,\ java.util.List,\ Deck,\ Discard,\ int)
+comment2.params=cardList\ handList\ players
+comment2.target=int\ checkHands(java.util.List,\ java.util.List,\ int)
+comment3.params=player\ hand\ cardList
+comment3.target=boolean\ turn(int,\ Hand,\ java.util.List)
+numComments=4

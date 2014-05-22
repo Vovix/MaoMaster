@@ -28,9 +28,9 @@ public class Discard
      * @param  y   a sample parameter for a method
      * @return     the sum of x and y 
      */
-    public void add(String name){
-        if(size>0) cards=cards+",";
-        cards=cards+name;
+    public void add(String cardIndex){
+        if(size>0) cards=","+cards;
+        cards=cardIndex+cards;
         size++;
     }
     public int getSize(){

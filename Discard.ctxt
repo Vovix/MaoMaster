@@ -2,7 +2,7 @@
 comment0.params=cardList
 comment0.target=Discard(java.util.List)
 comment0.text=\r\n\ Constructor\ for\ objects\ of\ class\ Discard\r\n
-comment1.params=name
+comment1.params=cardIndex
 comment1.target=void\ add(java.lang.String)
 comment1.text=\r\n\ An\ example\ of\ a\ method\ -\ replace\ this\ comment\ with\ your\ own\r\n\ \r\n\ @param\ \ y\ \ \ a\ sample\ parameter\ for\ a\ method\r\n\ @return\ \ \ \ \ the\ sum\ of\ x\ and\ y\ \r\n
 comment2.params=

@@ -69,7 +69,7 @@ public class Deck
             random=rNGesus.nextInt(cardArray.length);
             while(cardArray[random].equals("D.N.E.")) random=rNGesus.nextInt(cardArray.length);
             newCardArray[i]=cardArray[random];
-            cardArray[random].equals("D.N.E.");
+            cardArray[random]="D.N.E.";
         }
         cards=newCardArray[0];
         for(int i=1;i<newCardArray.length;i++) cards=cards+","+newCardArray[i];
@@ -82,9 +82,30 @@ public class Deck
             random=rNGesus.nextInt(cardArray.length);
             while(cardArray[random].equals("D.N.E.")) random=rNGesus.nextInt(cardArray.length);
             newCardArray[i]=cardArray[random];
-            cardArray[random].equals("D.N.E.");
+            cardArray[random]="D.N.E.";
         }
         cards=newCardArray[0];
         for(int i=1;i<newCardArray.length;i++) cards=cards+","+newCardArray[i];
+    }
+    public boolean discardTop(Discard discard){
+        this.discard=discard;
+        String card;
+        if(cards.indexOf(",")==-1){
+            card = "-1";
+        } else {
+            card = cards.substring(0,cards.indexOf(","));
+        }
+        if(card.equals("-1")){
+            if(discard.getSize()>0){
+                this.shuffleIn(discard);
+                discard.add(this.draw(discard));
+                return false;
+            } else return true;
+        } else {
+            cards=cards.substring(cards.indexOf(",")+1,cards.length());
+            size--;
+        }
+        discard.add(card);
+        return false;
     }
 }

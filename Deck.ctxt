@@ -9,4 +9,6 @@ comment2.params=discard
 comment2.target=void\ shuffleIn(Discard)
 comment3.params=
 comment3.target=void\ shuffle()
-numComments=4
+comment4.params=discard
+comment4.target=boolean\ discardTop(Discard)
+numComments=5
