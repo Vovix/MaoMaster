@@ -34,7 +34,7 @@ public class Hand
      * @return     the sum of x and y 
      */
     public void draw(int n,Deck deck,Discard discard){
-        this.deck=deck;
+       // this.deck=deck;
         for(int i=0;i<n;i++){
             String newCard=deck.draw(discard);
             if(!newCard.equals("D.N.E.")){
