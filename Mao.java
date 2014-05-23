@@ -42,17 +42,25 @@ public class Mao
         int playerOutOfCards=-1;
         while(playerOutOfCards==-1){
             for(int i=0;i<players;i++){
-                handList.get(i).hasSaidMao=turn(i,handList.get(i),cardList);
+                /*String wordsSaid=*/turn(i,handList.get(i),cardList,deck,discard);
+                //handList.get(i).hasSaidMao=false;
                 playerOutOfCards=checkHands(cardList,handList,players);
-                if(playerOutOfCards!=-1) i=players;
+                if(playerOutOfCards!=-1){
+                    if(handList.get(playerOutOfCards).hasSaidMao){
+                        if(playerOutOfCards==0){
+                            System.out.println("I win!");
+                            return false;
+                        }else{
+                            System.out.println("Player "+playerOutOfCards+" wins!");
+                            return false;
+                        }
+                    }else{
+                        System.out.println("Failure to say \"Mao.\"");
+                        handList.get(playerOutOfCards).draw(2,deck,discard);
+                        playerOutOfCards=-1;
+                    }
+                }
             }
-        }
-        if(handList.get(playerOutOfCards).hasSaidMao==true){
-            if(playerOutOfCards==0) System.out.println("I win!");
-            else System.out.println("Player "+playerOutOfCards+" wins!");
-        }else{
-            System.out.println("Failure to say \"Mao.\"");
-            handList.get(playerOutOfCards).draw(2,deck,discard);
         }
         return false;
     }
@@ -62,21 +70,54 @@ public class Mao
         }
         return -1;
     }
-    public static boolean turn(int player,Hand hand,List<Card> cardList/*may need more arguments*/){
-        boolean hasSaidMao = false;
+    public static void turn(int player,Hand hand,List<Card> cardList,Deck deck,Discard discard/*may need more arguments*/){
         Scanner input = new Scanner(System.in);
+        System.out.println();
         System.out.println("Player "+player+"'s turn. Press enter to continue.");
         while(input.nextLine()==null);
         System.out.println("Your cards:");
         System.out.println(hand.getCardNames(cardList));
-        System.out.println("Play which card?");
-        String playedCard;
+        System.out.println("Play which card? Type \"draw\" to draw a card, which you may then play.");
+        String playedCard="";
         boolean validPlay=false;
         while(!validPlay){
             playedCard=input.next();
-            if(hand.getCardNames(cardList).indexOf(playedCard)!=-1) validPlay=true;
-            else System.out.println("Invalid input.");
+            if(hand.getCardNames(cardList).indexOf(playedCard)!=-1&&playedCard.toUpperCase().matches("([AJQK]|\\d{1,2})[HDSC]")||playedCard.equals("draw")) validPlay=true;
+            else System.out.println("Invalid input (no penalty). Please re-enter.");
         }
-        return hasSaidMao;
+        if(!playedCard.toLowerCase().equals("draw")){
+            if(/*INSERT RULE CHECKER HERE*/true){
+                String cardIndex="none";
+                for(int i=0;i<52;i++){
+                    if(cardList.get(i).name().equals(playedCard)){
+                        cardIndex=String.valueOf(i);
+                        i=52;
+                    }
+                }
+                hand.play(cardIndex,discard);
+            }else{
+                System.out.println("Improper play.");
+                hand.draw(1,deck,discard);
+            }
+            //System.out.println("Say anything? Asterisks the beginning signify knocking (e.g. \"** Hello.\")");
+            return/* input.next()*/;
+        }else{
+            hand.draw(1,deck,discard);
+            String cardIndex=hand.getCards().split(",")[hand.getCards().split(",").length-1];
+            System.out.println("You drew the "+cardList.get(Integer.parseInt(cardIndex)).fullName()+".");
+            System.out.println("Play drawn card? (y/n)");
+            String answer;
+            boolean validAnswer=false;
+            while(!validAnswer){
+                answer=input.next();
+                if(answer.charAt(0)=='y'){
+                    hand.play(cardIndex,discard);
+                    validAnswer=true;
+                }else if(answer.charAt(0)=='n'){
+                    validAnswer=true;
+                }else System.out.println("Invalid response (no penalty). Please re-enter.");
+            }
+        }
+        //return input.next();
     }
 }

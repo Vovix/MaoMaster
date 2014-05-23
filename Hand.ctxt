@@ -11,4 +11,6 @@ comment3.params=cardList
 comment3.target=java.lang.String\ getCardNames(java.util.List)
 comment4.params=
 comment4.target=int\ getSize()
-numComments=5
+comment5.params=cardIndex\ discard
+comment5.target=void\ play(java.lang.String,\ Discard)
+numComments=6

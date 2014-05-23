@@ -59,4 +59,26 @@ public class Hand
     public int getSize(){
         return size;
     }
+    public void play(String cardIndex,Discard discard){
+        if(cardIndex.equals("none")){
+            System.out.println("Error--this line of code should be inaccessible.");
+            return;
+        }
+        String[] cardsInHand=getCards().split(",");
+        for(int i=0;i<cardsInHand.length;i++){
+            if(cardsInHand[i].equals(cardIndex)){
+                cardsInHand[i]="";
+                i=cardsInHand.length;
+            }
+        }
+        cards="";
+        for(int i=0;i<cardsInHand.length;i++){
+            if(!cardsInHand[i].isEmpty()){
+                if(cards.length()>0) cards=cards+",";
+                cards=cards+cardsInHand[i];
+            }
+        }
+        size--;
+        discard.add(cardIndex);
+    }
 }
