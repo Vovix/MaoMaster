@@ -12,7 +12,11 @@ public class Mao
     // instance variables - replace the example below with your own
     // main method
     public static void main(String[] args){
-        int players = 2;
+        Scanner input = new Scanner(System.in);
+        cls();
+        int players = getPlayers(input); // asks for human players, returns all (including computer)
+        cls();
+        char difficulty = getDifficulty(input); // e = easy, m = medium, h = hard
         // create 52 cards
         List<Card> cardList = new ArrayList<Card>();
         for(int i=0;i<52;i++){
@@ -23,19 +27,31 @@ public class Mao
         Discard discard = new Discard(cardList);
         // create deck
         Deck deck = new Deck(cardList,discard);
-        for(int i=0;i<52;i++) System.out.println(cardList.get(i).name()); // temporary
         // create [players] hands
         List<Hand> handList = new ArrayList<Hand>();
         for(int i=0;i<players;i++){
             Hand newHand = new Hand(cardList,deck,discard);
             handList.add(newHand);
         }
-        System.out.println("Hand 1:");
-        System.out.println(handList.get(0).getCards());
-        System.out.println("Hand 2:");
-        System.out.println(handList.get(1).getCards());
-        System.out.println("Done.");
         if(game(cardList,handList,deck,discard,players)) System.out.println("The game is a draw.");
+    }
+    public static int getPlayers(Scanner input){
+        System.out.println("How many (human) players?");
+        int players=input.nextInt();
+        while(players<1){
+            System.out.println("There must be at least one human player.");
+            players=input.nextInt();
+        }
+        return players+1; // +1 accounts for computer player
+    }
+    public static char getDifficulty(Scanner input){
+        System.out.println("What AI difficulty? easy=newbie; medium=knows basic rules; hard=knows all rules");
+        char dif=input.next().charAt(0);
+        while(dif!='e'&&dif!='m'&&dif!='h'){
+            System.out.println("Only values beginning with \"e\", \"m\", or \"h\" will be accepted. Difficulty?");
+            dif=input.next().charAt(0);
+        }
+        return dif;
     }
     public static boolean game(List<Card> cardList,List<Hand> handList,Deck deck,Discard discard,int players){
         if(deck.discardTop(discard)) return true;
@@ -72,9 +88,22 @@ public class Mao
     }
     public static void turn(int player,Hand hand,List<Card> cardList,Deck deck,Discard discard/*may need more arguments*/){
         Scanner input = new Scanner(System.in);
-        System.out.println();
+        cls();
         System.out.println("Player "+player+"'s turn. Press enter to continue.");
         while(input.nextLine()==null);
+        cls();
+        String[] topCards="D.N.E.,D.N.E.,D.N.E.".split(",");
+        while(discard.cardAt(0).equals("D.N.E.")){
+            deck.discardTop(discard);
+        }
+        for(int i=0;i<3;i++){
+            topCards[i]=discard.cardAt(i);
+        }
+        System.out.println("Last cards on pile:");
+        if(!topCards[2].equals("D.N.E.")) System.out.println("3rd: "+cardList.get(Integer.parseInt(topCards[2])).name());
+        if(!topCards[1].equals("D.N.E.")) System.out.println("2nd: "+cardList.get(Integer.parseInt(topCards[1])).name());
+        if(!topCards[0].equals("D.N.E.")) System.out.println("Top: "+cardList.get(Integer.parseInt(topCards[0])).name());
+        System.out.println();
         System.out.println("Your cards:");
         System.out.println(hand.getCardNames(cardList));
         System.out.println("Play which card? Type \"draw\" to draw a card, which you may then play.");
@@ -82,8 +111,13 @@ public class Mao
         boolean validPlay=false;
         while(!validPlay){
             playedCard=input.next();
-            if(hand.getCardNames(cardList).indexOf(playedCard)!=-1&&playedCard.toUpperCase().matches("([AJQK]|\\d{1,2})[HDSC]")||playedCard.equals("draw")) validPlay=true;
-            else System.out.println("Invalid input (no penalty). Please re-enter.");
+            if(hand.getCardNames(cardList).indexOf(playedCard)!=-1&&playedCard.toUpperCase().matches("([AJQK]|\\d{1,2})[HDSC]")||playedCard.equals("draw")){
+                validPlay=true;
+            }
+            else{
+                if(playedCard.equals("exit")||playedCard.equals("quit")) System.exit(0);
+                System.out.println("Invalid input (no penalty). Please re-enter.");
+            }
         }
         if(!playedCard.toLowerCase().equals("draw")){
             if(/*INSERT RULE CHECKER HERE*/true){
@@ -119,5 +153,14 @@ public class Mao
             }
         }
         //return input.next();
+    }
+    public static void cls(){
+        try{
+            if(System.getProperty("os.name").contains("Windows")) Runtime.getRuntime().exec("cls");
+            else Runtime.getRuntime().exec("clear");
+        }catch(Exception error){
+        }
+        System.out.println("\033[2J\n");
+        System.out.println("\f");
     }
 }

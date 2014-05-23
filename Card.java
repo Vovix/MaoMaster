@@ -68,14 +68,11 @@ public class Card
         String res;
         if(value==11){
             res="Jack";
-        }
-        if(value==12){
+        }else if(value==12){
             res="Queen";
-        }
-        if(value==13){
+        }else if(value==13){
             res="King";
-        }        
-        if(value==1){
+        }else if(value==1){
             res="Ace";
         }else{
             res=String.valueOf(value);

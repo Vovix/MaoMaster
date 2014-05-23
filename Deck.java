@@ -60,7 +60,16 @@ public class Deck
     }
     public void shuffleIn(Discard discard){
         this.discard=discard;
-        size=size+discard.getSize();
+        size=size+discard.getSize()-3;
+        if(size<0){
+            System.out.println("Error. Quitting.");
+            try {
+                Thread.sleep(1000);
+            } catch(Exception error) {
+                Thread.currentThread().interrupt();
+            }
+            System.exit(0);
+        }
         cards=cards+discard.addToDeck();
         String[] cardArray=cards.split(",");
         String[] newCardArray=new String[cardArray.length];

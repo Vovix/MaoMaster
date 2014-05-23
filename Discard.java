@@ -36,13 +36,39 @@ public class Discard
     public int getSize(){
         return size;
     }
+    public String getCards(){
+        return cards;
+    }
     public String addToDeck(){
         String cardsAdded="";
+        String[] topCards="D.N.E.,D.N.E.,D.N.E.".split(",");
+        for(int i=0;i<3;i++){
+            if(cards.contains(",")){
+                topCards[i]=cards.substring(0,cards.indexOf(","));
+                cards=cards.substring(cards.indexOf(",")+1,cards.length());
+                size--;
+            }
+        }
         while(size>0){
             cardsAdded=cardsAdded+","+cards.substring(0,cards.indexOf(","));
             cards=cards.substring(cards.indexOf(",")+1,cards.length());
             size--;
         }
+        for(int i=1;i<3;i++){
+            if(!topCards[i].equals("D.N.E.")){
+                if(cards.length()>0) cards=cards+",";
+                cards=cards+topCards[i];
+                size++;
+            }
+        }
         return cardsAdded;
+    }
+    public String cardAt(int index){
+        String[] cardArray=cards.split(",");
+        if(index>=0&&index<cardArray.length){
+            return cardArray[index];
+        }else{
+            return "D.N.E.";
+        }
     }
 }
