@@ -58,7 +58,7 @@ public class Mao
         int playerOutOfCards=-1;
         while(playerOutOfCards==-1){
             for(int i=0;i<players;i++){
-                /*String wordsSaid=*/turn(i,handList.get(i),cardList,deck,discard);
+                /*String wordsSaid=*/turn(i,players,handList.get(i),cardList,handList,deck,discard);
                 //handList.get(i).hasSaidMao=false;
                 playerOutOfCards=checkHands(cardList,handList,players);
                 if(playerOutOfCards!=-1){
@@ -86,7 +86,7 @@ public class Mao
         }
         return -1;
     }
-    public static void turn(int player,Hand hand,List<Card> cardList,Deck deck,Discard discard/*may need more arguments*/){
+    public static void turn(int player,int players,Hand hand,List<Card> cardList,List<Hand> handList,Deck deck,Discard discard/*may need more arguments*/){
         Scanner input = new Scanner(System.in);
         cls();
         System.out.println("Player "+player+"'s turn. Press enter to continue.");
@@ -99,6 +99,14 @@ public class Mao
         for(int i=0;i<3;i++){
             topCards[i]=discard.cardAt(i);
         }
+        System.out.println("Opponent hand sizes:");
+        for(int i=0;i<players;i++){
+            String playerName;
+            if(i==0) playerName="AI";
+            else playerName="P"+i;
+            if(i!=player) System.out.print(playerName+": "+handList.get(i).getSize()+"   ");
+        }
+        System.out.println();
         System.out.println("Last cards on pile:");
         if(!topCards[2].equals("D.N.E.")) System.out.println("3rd: "+cardList.get(Integer.parseInt(topCards[2])).name());
         if(!topCards[1].equals("D.N.E.")) System.out.println("2nd: "+cardList.get(Integer.parseInt(topCards[1])).name());
@@ -110,16 +118,16 @@ public class Mao
         String playedCard="";
         boolean validPlay=false;
         while(!validPlay){
-            playedCard=input.next();
-            if(hand.getCardNames(cardList).indexOf(playedCard)!=-1&&playedCard.toUpperCase().matches("([AJQK]|\\d{1,2})[HDSC]")||playedCard.equals("draw")){
+            playedCard=input.next().toUpperCase();
+            if(hand.getCardNames(cardList).indexOf(playedCard)!=-1&&playedCard.matches("([AJQK]|\\d{1,2})[HDSC]")||playedCard.equals("DRAW")){
                 validPlay=true;
             }
             else{
-                if(playedCard.equals("exit")||playedCard.equals("quit")) System.exit(0);
+                if(playedCard.equals("EXIT")||playedCard.equals("QUIT")) System.exit(0);
                 System.out.println("Invalid input (no penalty). Please re-enter.");
             }
         }
-        if(!playedCard.toLowerCase().equals("draw")){
+        if(!playedCard.equals("DRAW")){
             if(/*INSERT RULE CHECKER HERE*/true){
                 String cardIndex="none";
                 for(int i=0;i<52;i++){
