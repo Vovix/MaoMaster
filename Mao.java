@@ -1,6 +1,7 @@
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Arrays;
 /**
  * Write a description of class Main here.
  * 
@@ -33,7 +34,33 @@ public class Mao
             Hand newHand = new Hand(cardList,deck,discard);
             handList.add(newHand);
         }
-        if(game(cardList,handList,deck,discard,players)) System.out.println("The game is a draw.");
+        List<Rule> ruleList = new ArrayList<Rule>();
+        List<Integer> tVals=new ArrayList<Integer>();
+        List<Integer> tLVals=new ArrayList<Integer>();
+        List<Character> tSuits=new ArrayList<Character>();
+        List<Character> tLSuits=new ArrayList<Character>();
+        tVals=intList("1,2,3,4,5,6,7,8,9,10,11,12,13");
+        tLVals=intList("1,2,3,4,5,6,7,8,9,10,11,12,13");
+        tSuits=charList("HDSC");
+        tLSuits=charList("HDSC");
+        Rule sameSuitValue = new Rule(tSuits,tVals,tLSuits,tLVals,-1,-1,true,"");
+        ruleList.add(sameSuitValue); // end rule 1
+        if(game(cardList,handList,ruleList,deck,discard,players)) System.out.println("The game is a draw.");
+    }
+    public static List<Integer> intList(String ints){
+        List<Integer> list = new ArrayList<Integer>();
+        String[] strArray = ints.split(",");
+        for(int i=0;i<strArray.length;i++){
+            list.add(Integer.parseInt(strArray[i]));
+        }
+        return list;
+    }
+    public static List<Character> charList(String chars){
+        List<Character> list = new ArrayList<Character>();
+        for(int i=0;i<chars.length();i++){
+            list.add(chars.charAt(i));
+        }
+        return list;
     }
     public static int getPlayers(Scanner input){
         System.out.println("How many (human) players?");
@@ -53,12 +80,13 @@ public class Mao
         }
         return dif;
     }
-    public static boolean game(List<Card> cardList,List<Hand> handList,Deck deck,Discard discard,int players){
+    public static boolean game(List<Card> cardList,List<Hand> handList,List<Rule> ruleList,Deck deck,Discard discard,int players){
+        Scanner input = new Scanner(System.in);
         if(deck.discardTop(discard)) return true;
         int playerOutOfCards=-1;
         while(playerOutOfCards==-1){
             for(int i=0;i<players;i++){
-                /*String wordsSaid=*/turn(i,players,handList.get(i),cardList,handList,deck,discard);
+                /*String wordsSaid=*/turn(i,players,handList.get(i),cardList,handList,ruleList,deck,discard);
                 //handList.get(i).hasSaidMao=false;
                 playerOutOfCards=checkHands(cardList,handList,players);
                 if(playerOutOfCards!=-1){
@@ -75,7 +103,14 @@ public class Mao
                         handList.get(playerOutOfCards).draw(2,deck,discard);
                         playerOutOfCards=-1;
                     }
+                }else if(handList.get(i).hasSaidMao){
+                    System.out.println("Unnecessarily saying \"Mao.\"");
+                    handList.get(i).draw(1,deck,discard);
                 }
+                for(int index=0;index<players;index++){
+                    handList.get(index).hasSaidMao=false;
+                }
+                while(input.nextLine()==null);
             }
         }
         return false;
@@ -86,7 +121,7 @@ public class Mao
         }
         return -1;
     }
-    public static void turn(int player,int players,Hand hand,List<Card> cardList,List<Hand> handList,Deck deck,Discard discard/*may need more arguments*/){
+    public static void turn(int player,int players,Hand hand,List<Card> cardList,List<Hand> handList,List<Rule> ruleList,Deck deck,Discard discard/*may need more arguments*/){
         Scanner input = new Scanner(System.in);
         cls();
         System.out.println("Player "+player+"'s turn. Press enter to continue.");
@@ -128,19 +163,7 @@ public class Mao
             }
         }
         if(!playedCard.equals("DRAW")){
-            if(/*INSERT RULE CHECKER HERE*/true){
-                String cardIndex="none";
-                for(int i=0;i<52;i++){
-                    if(cardList.get(i).name().equals(playedCard)){
-                        cardIndex=String.valueOf(i);
-                        i=52;
-                    }
-                }
-                hand.play(cardIndex,discard);
-            }else{
-                System.out.println("Improper play.");
-                hand.draw(1,deck,discard);
-            }
+            checkPlay(playedCard,cardList,hand,ruleList,deck,discard);
             //System.out.println("Say anything? Asterisks the beginning signify knocking (e.g. \"** Hello.\")");
             return/* input.next()*/;
         }else{
@@ -153,7 +176,7 @@ public class Mao
             while(!validAnswer){
                 answer=input.next();
                 if(answer.charAt(0)=='y'){
-                    hand.play(cardIndex,discard);
+                    checkPlay(cardList.get(Integer.parseInt(cardIndex)).name(),cardList,hand,ruleList,deck,discard);
                     validAnswer=true;
                 }else if(answer.charAt(0)=='n'){
                     validAnswer=true;
@@ -161,6 +184,60 @@ public class Mao
             }
         }
         //return input.next();
+    }
+    public static void checkPlay(String playedCard,List<Card> cardList,Hand hand,List<Rule> ruleList,Deck deck,Discard discard){
+        Scanner input = new Scanner(System.in);
+        System.out.println("Say anything? Enter a period to say nothing.");
+        System.out.println("Asterisks the beginning signify knocking (e.g. \"** Hello.\").");
+        String said=input.next().toLowerCase();
+        if(said.equals(".")) said="";
+        if(said.toLowerCase().contains(" mao")){
+            hand.hasSaidMao=true;
+            said=said.substring(0,said.indexOf(" mao"))+said.substring(said.indexOf(" mao")+4,said.length());
+        }else if(said.toLowerCase().contains("mao ")){
+            hand.hasSaidMao=true;
+            said=said.substring(0,said.indexOf("mao "))+said.substring(said.indexOf(" mao")+4,said.length());
+        }else if(said.toLowerCase().contains("mao")){
+            hand.hasSaidMao=true;
+            said=said.substring(0,said.indexOf("mao"))+said.substring(said.indexOf(" mao")+3,said.length());
+        }
+        for(int ruleNum=0;ruleNum<ruleList.size();ruleNum++){
+            String cardIndex="none";
+            for(int i=0;i<52;i++){
+                if(cardList.get(i).name().equals(playedCard)){
+                    cardIndex=String.valueOf(i);
+                    i=52;
+                }
+            }
+            int cIndex=Integer.parseInt(cardIndex);
+            if(!discard.cardAt(0).equals("D.N.E.")){
+                String[] ruleOut=ruleList.get(ruleNum).check(cardList.get(cIndex),cardList.get(Integer.parseInt(discard.cardAt(0))),said);
+                if(ruleOut[1].equals("true")){
+                    hand.draw(1,deck,discard);
+                }
+                if(ruleOut[2].equals("true")){
+                    hand.play(cardIndex,discard);
+                }else{
+                    System.out.println("Improper play.");
+                    hand.draw(1,deck,discard);
+                }
+            }else{
+                String[] ruleOut=ruleList.get(ruleNum).check(cardList.get(cIndex),null,said);
+                if(ruleOut[1].equals("true")){
+                    hand.draw(1,deck,discard);
+                }
+                if(ruleOut[2].equals("true")){
+                    hand.play(cardIndex,discard);
+                }else{
+                    System.out.println("Improper play.");
+                    hand.draw(1,deck,discard);
+                }
+            }
+        }
+        if(!said.matches("\\w*")){
+            System.out.println("Speaking out of turn.");
+            hand.draw(1,deck,discard);
+        }
     }
     public static void cls(){
         try{

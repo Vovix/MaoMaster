@@ -9,20 +9,19 @@ import java.util.ArrayList;
 public class Rule
 {
     // instance variables - replace the example below with your own
-    private List<Card> triggerSuit = new ArrayList<Card>(); // list of suits that trigger the rule    
+    private List<Character> triggerSuit = new ArrayList<Character>(); // list of suits that trigger the rule    
     private List<Integer> triggerValue = new ArrayList<Integer>(); // list of values that trigger the rule
     private List<Character> triggerLastSuit = new ArrayList<Character>(); // list of suits that trigger the rule
     private List<Integer> triggerLastValue = new ArrayList<Integer>(); // list of values that trigger the rule
     private int triggerSameValue; // -1=different 0=no 1=same
     private int triggerSameSuit; // -1=different 0=no 1=same
     private boolean and;
-    
     private String haveToSay;
 
     /**
      * Constructor for objects of class Rule
      */
-    public Rule(List<Card> triggerSuit,List<Integer> triggerValue,List<Character> triggerLastSuit,List<Integer> triggerLastValue,int triggerSameValue,int triggerSameSuit,boolean and)
+    public Rule(List<Character> triggerSuit,List<Integer> triggerValue,List<Character> triggerLastSuit,List<Integer> triggerLastValue,int triggerSameValue,int triggerSameSuit,boolean and,String haveToSay)
     {
         this.triggerSuit=triggerSuit;
         this.triggerValue=triggerValue;
@@ -31,6 +30,7 @@ public class Rule
         this.triggerSameValue=triggerSameValue;
         this.triggerSameSuit=triggerSameSuit;
         this.and=and;
+        this.haveToSay=haveToSay;
     }
     private boolean trigger(Card played, Card previous){
         if (and){
@@ -40,25 +40,33 @@ public class Rule
             if (!triggerValue.contains(played.value())){ //check value
                 return false;
             }
-            if (!triggerLastSuit.contains(previous.suit())){ //check last suit
-                return false;
+            if(previous!=null){
+                if (!triggerLastSuit.contains(previous.suit())){ //check last suit
+                    return false;
+                }
+                if (!triggerLastValue.contains(previous.value())){ //check last value
+                    return false;
+                }
+                if (triggerSameValue==1&&played.value()!=previous.value()){//check if values are the same
+                    return false;
+                }
+                if (triggerSameValue==-1&&played.value()==previous.value()){//check if values are different
+                    return false;
+                }
+                if (triggerSameSuit==2&&played.suit()!=previous.suit()){//check if colors are the same
+                    return false;
+                }
+                if (triggerSameSuit==-2&&played.suit()==previous.suit()){//check if colors are different
+                    return false;
+                }
+                if (triggerSameSuit==1&&played.suit()!=previous.suit()){//check if suits are the same
+                    return false;
+                }
+                if (triggerSameSuit==-1&&played.suit()==previous.suit()){//check if suits are different
+                    return false;
+                }
             }
-            if (!triggerLastValue.contains(previous.value())){ //check last value
-                return false;
-            }
-            if (triggerSameValue==1&played.value()!=previous.value()){//check if values are the same
-                return false;
-            }
-            if (triggerSameValue==-1&played.value()==previous.value()){//check if values are different
-                return false;
-            }
-            if (triggerSameSuit==1&played.suit()!=previous.suit()){//check if suits are the same
-                return false;
-            }
-            if (triggerSameSuit==-1&played.suit()==previous.suit()){//check if suits are different
-                return false;
-            }
-           return true;
+            return true;
         }else{
             if (triggerSuit.contains(played.suit())){ //check suit
                 return true;
@@ -66,26 +74,34 @@ public class Rule
             if (triggerValue.contains(played.value())){ //check value
                 return true;
             }
-            if (triggerLastSuit.contains(previous.suit())){ //check last suit
-                return true;
+            if(previous!=null){
+                if (triggerLastSuit.contains(previous.suit())){ //check last suit
+                    return true;
+                }
+                if (triggerLastValue.contains(previous.value())){ //check last value
+                    return true;
+                }
+                if (triggerSameValue==1&&played.value()==previous.value()){//check if values are the same
+                    return true;
+                }
+                if (triggerSameValue==-1&&played.value()!=previous.value()){//check if values are different
+                    return true;
+                }
+                if (triggerSameSuit==2&&played.suit()==previous.suit()){//check if colors are the same
+                    return true;
+                }
+                if (triggerSameSuit==-2&&played.suit()!=previous.suit()){//check if colors are different
+                    return true;
+                }
+                if (triggerSameSuit==1&&played.suit()==previous.suit()){//check if suits are the same
+                    return true;
+                }
+                if (triggerSameSuit==-1&&played.suit()!=previous.suit()){//check if suits are different
+                    return true;
+                }
             }
-            if (triggerLastValue.contains(previous.value())){ //check last value
-                return true;
-            }
-            if (triggerSameValue==1&played.value()==previous.value()){//check if values are the same
-                return true;
-            }
-            if (triggerSameValue==-1&played.value()!=previous.value()){//check if values are different
-                return true;
-            }
-            if (triggerSameSuit==1&played.suit()==previous.suit()){//check if suits are the same
-                return true;
-            }
-            if (triggerSameSuit==-1&played.suit()!=previous.suit()){//check if suits are different
-                return true;
-            }
-           return false;
-        } 
+            return false;
+        }
     }
 
     /**
@@ -94,12 +110,78 @@ public class Rule
      * @param  y   a sample parameter for a method
      * @return     the sum of x and y 
      */
-    public boolean check(Card played, Card previous, String said)
+    public String[] check(Card played, Card previous, String said)
     {
+        boolean failureToSay=false;
+        String haveToSayTemp;
+        String failedToSayStr="Failure to ";
+        String[] res=new String[3];
+        haveToSayTemp=haveToSay;
         if (!trigger(played,previous)) {
-            return true;
+            res[0]=said;
+            res[1]="false";
+            res[2]="true";
+            return res;
         }
-        //code code code code...
-        return /*UPDATE THIS*/true;/*UPDATE THIS*/
+        if(haveToSay.matches("\\*[cp](Val|Suit|Name)")){
+            if(haveToSay.charAt(1)=='c'){
+                if(haveToSay.charAt(2)=='V'){
+                    haveToSayTemp=String.valueOf(played.value());
+                    failedToSayStr=failedToSayStr+"say value of ";
+                }
+                if(haveToSay.charAt(2)=='S'){
+                    haveToSayTemp=String.valueOf(played.suit());
+                    failedToSayStr=failedToSayStr+"say suit of ";
+                }
+                if(haveToSay.charAt(2)=='N'){
+                    haveToSayTemp=played.fullName();
+                    failedToSayStr=failedToSayStr+"name ";
+                }
+                failedToSayStr=failedToSayStr+"card.";
+            }
+            if(haveToSay.charAt(1)=='p'){
+                if(previous!=null){
+                    if(haveToSay.charAt(2)=='V'){
+                        haveToSayTemp=String.valueOf(previous.value());
+                        failedToSayStr=failedToSayStr+"say value of ";
+                    }
+                    if(haveToSay.charAt(2)=='S'){
+                        haveToSayTemp=String.valueOf(previous.suit());
+                        failedToSayStr=failedToSayStr+"say suit of ";
+                    }
+                    if(haveToSay.charAt(2)=='N'){
+                        haveToSayTemp=previous.fullName();
+                        failedToSayStr=failedToSayStr+"name ";
+                    }
+                    failedToSayStr=failedToSayStr+"previous card.";
+                }else{
+                    haveToSayTemp="";
+                }
+            }
+        }else{
+            failedToSayStr=failedToSayStr+"say "+haveToSayTemp;
+        }
+        if (!haveToSayTemp.equals("")&&!said.toLowerCase().contains(haveToSayTemp.toLowerCase())){
+            failureToSay=true;
+        }else if(said.toLowerCase().contains(haveToSayTemp)){
+            said=said.substring(0,said.indexOf(haveToSayTemp))+said.substring(said.indexOf(haveToSayTemp)+haveToSayTemp.length(),said.length());
+        }
+        if(failureToSay){
+            System.out.println(failedToSayStr);
+        }
+        while(said.contains("  ")){
+            said=said.substring(0,said.indexOf("  "))+" "+said.substring(said.indexOf("  ")+2,said.length());
+        }
+        if(said.equals(" ")) said="";
+        if(haveToSay.equals("")){
+            res[0]=said;
+            res[1]="false";
+            res[2]="false"; // {said,draw,valid play} all triggers mean invalid plays
+            return res;
+        }
+        res[0]=said;
+        res[1]=String.valueOf(failureToSay);
+        res[2]="true"; // {said,draw,valid play} triggers only mean haveToSay must be said
+        return res;
     }
 }
