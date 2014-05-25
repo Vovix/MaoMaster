@@ -50,8 +50,13 @@ public class Discard
             }
         }
         while(size>0){
-            cardsAdded=cardsAdded+","+cards.substring(0,cards.indexOf(","));
-            cards=cards.substring(cards.indexOf(",")+1,cards.length());
+            if(size>1){
+                cardsAdded=cardsAdded+","+cards.substring(0,cards.indexOf(","));
+                cards=cards.substring(cards.indexOf(",")+1,cards.length());
+            }else{
+                cardsAdded=cardsAdded+","+cards;
+                cards="";
+            }
             size--;
         }
         for(int i=1;i<3;i++){

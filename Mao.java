@@ -147,30 +147,9 @@ public class Mao
         int playerOutOfCards=-1;
         while(playerOutOfCards==-1){
             for(int i=0;i<players;i++){
-                /*String wordsSaid=*/turn(i,players,handList.get(i),cardList,handList,ruleList,deck,discard);
+                /*String wordsSaid=*/playerOutOfCards=turn(i,players,handList.get(i),cardList,handList,ruleList,deck,discard);
                 //handList.get(i).hasSaidMao=false;
-                playerOutOfCards=checkHands(cardList,handList,players);
-                if(playerOutOfCards!=-1){
-                    if(handList.get(playerOutOfCards).hasSaidMao){
-                        if(playerOutOfCards==0){
-                            System.out.println("I win!");
-                            return false;
-                        }else{
-                            System.out.println("Player "+playerOutOfCards+" wins!");
-                            return false;
-                        }
-                    }else{
-                        System.out.println("Failure to say \"Mao.\"");
-                        handList.get(playerOutOfCards).draw(2,deck,discard);
-                        playerOutOfCards=-1;
-                    }
-                }else if(handList.get(i).hasSaidMao){
-                    System.out.println("Unnecessarily saying \"Mao.\"");
-                    handList.get(i).draw(1,deck,discard);
-                }
-                for(int index=0;index<players;index++){
-                    handList.get(index).hasSaidMao=false;
-                }
+                if(playerOutOfCards!=-1) i=players;
                 while(input.nextLine()==null);
             }
         }
@@ -182,7 +161,8 @@ public class Mao
         }
         return -1;
     }
-    public static void turn(int player,int players,Hand hand,List<Card> cardList,List<Hand> handList,List<Rule> ruleList,Deck deck,Discard discard/*may need more arguments*/){
+    public static int turn(int player,int players,Hand hand,List<Card> cardList,List<Hand> handList,List<Rule> ruleList,Deck deck,Discard discard/*may need more arguments*/){
+        int playerOutOfCards=-1;
         Scanner input = new Scanner(System.in);
         cls();
         System.out.println("Player "+player+"'s turn. Press enter to continue.");
@@ -224,8 +204,8 @@ public class Mao
             }
         }
         if(!playedCard.equals("DRAW")){
-            checkPlay(playedCard,cardList,hand,ruleList,deck,discard);
-            return;
+            playerOutOfCards=checkPlay(playedCard,cardList,hand,handList,ruleList,deck,discard,players,player);
+            return playerOutOfCards;
         }else{
             hand.draw(1,deck,discard);
             String cardIndex=hand.getCards().split(",")[hand.getCards().split(",").length-1];
@@ -236,30 +216,21 @@ public class Mao
             while(!validAnswer){
                 answer=input.next();
                 if(answer.charAt(0)=='y'){
-                    checkPlay(cardList.get(Integer.parseInt(cardIndex)).name(),cardList,hand,ruleList,deck,discard);
+                    playerOutOfCards=checkPlay(cardList.get(Integer.parseInt(cardIndex)).name(),cardList,hand,handList,ruleList,deck,discard,players,player);
                     validAnswer=true;
                 }else if(answer.charAt(0)=='n'){
                     validAnswer=true;
                 }else System.out.println("Invalid response (no penalty). Please re-enter.");
             }
         }
+        return playerOutOfCards;
     }
-    public static void checkPlay(String playedCard,List<Card> cardList,Hand hand,List<Rule> ruleList,Deck deck,Discard discard){
+    public static int checkPlay(String playedCard,List<Card> cardList,Hand hand,List<Hand> handList,List<Rule> ruleList,Deck deck,Discard discard,int players,int player){
         Scanner input = new Scanner(System.in);
         System.out.println("Say anything? Press enter to say nothing.");
         //System.out.println("Asterisks at the beginning signify knocking (e.g. \"** Hello.\").");
         String said=input.nextLine().toLowerCase();
         //if(said.equals(".")) said="";
-        if(said.toLowerCase().contains(" mao")){
-            hand.hasSaidMao=true;
-            said=said.substring(0,said.indexOf(" mao"))+said.substring(said.indexOf(" mao")+4,said.length());
-        }else if(said.toLowerCase().contains("mao ")){
-            hand.hasSaidMao=true;
-            said=said.substring(0,said.indexOf("mao "))+said.substring(said.indexOf(" mao")+4,said.length());
-        }else if(said.toLowerCase().contains("mao")){
-            hand.hasSaidMao=true;
-            said=said.substring(0,said.indexOf("mao"))+said.substring(said.indexOf(" mao")+3,said.length());
-        }
         String cardIndex="none";
         for(int i=0;i<52;i++){
             if(cardList.get(i).name().equals(playedCard)){
@@ -294,12 +265,49 @@ public class Mao
                 said=ruleOut[0];
             }
         }
+        if(canPlay) hand.play(cardIndex,discard);
+        if(said.toLowerCase().contains(" mao")){
+            hand.hasSaidMao=true;
+            int indMao=said.toLowerCase().indexOf(" mao");
+            said=said.substring(0,indMao)+said.substring(indMao+4,said.length());
+        }else if(said.toLowerCase().contains("mao ")){
+            hand.hasSaidMao=true;
+            int indMao=said.toLowerCase().indexOf("mao ");
+            said=said.substring(0,indMao)+said.substring(indMao+4,said.length());
+        }else if(said.toLowerCase().contains("mao")){
+            hand.hasSaidMao=true;
+            int indMao=said.toLowerCase().indexOf("mao");
+            said=said.substring(0,indMao)+said.substring(indMao+3,said.length());
+        }
+        int playerOutOfCards=-1;//checkHands(cardList,handList,players);
+        if(hand.getSize()<1) playerOutOfCards=player;
+        if(playerOutOfCards!=-1){
+            if(handList.get(playerOutOfCards).hasSaidMao){
+                if(playerOutOfCards==0){
+                    System.out.println("I win!");
+                    return playerOutOfCards;
+                }else{
+                    System.out.println("Player "+playerOutOfCards+" wins!");
+                    return playerOutOfCards;
+                }
+            }else{
+                System.out.println("Failure to say \"Mao.\"");
+                handList.get(playerOutOfCards).draw(2,deck,discard);
+                playerOutOfCards=-1;
+            }
+        }else if(hand.hasSaidMao){
+            System.out.println("Unnecessarily saying \"Mao.\"");
+            hand.draw(1,deck,discard);
+        }
+        for(int index=0;index<players;index++){
+            handList.get(index).hasSaidMao=false;
+        }
         if(!said.matches("[\\s\\.]*")){
             System.out.println("Speaking out of turn (card given).");
             hand.draw(1,deck,discard);
         }
-        if(canPlay) hand.play(cardIndex,discard);
         System.out.println("Press enter to continue.");
+        return -1;
     }
     public static void cls(){
         try{
