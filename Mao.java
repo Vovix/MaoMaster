@@ -2,6 +2,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Arrays;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 /**
  * Write a description of class Main here.
  * 
@@ -35,16 +38,74 @@ public class Mao
             handList.add(newHand);
         }
         List<Rule> ruleList = new ArrayList<Rule>();
-        List<Integer> tVals=new ArrayList<Integer>();
-        List<Integer> tLVals=new ArrayList<Integer>();
-        List<Character> tSuits=new ArrayList<Character>();
-        List<Character> tLSuits=new ArrayList<Character>();
-        tVals=intList("1,2,3,4,5,6,7,8,9,10,11,12,13");
-        tLVals=intList("1,2,3,4,5,6,7,8,9,10,11,12,13");
-        tSuits=charList("HDSC");
-        tLSuits=charList("HDSC");
-        Rule sameSuitValue = new Rule(tSuits,tVals,tLSuits,tLVals,-1,-1,true,"");
-        ruleList.add(sameSuitValue); // end rule 1
+//         List<Integer> tVals=new ArrayList<Integer>();
+//         List<Integer> tLVals=new ArrayList<Integer>();
+//         List<Character> tSuits=new ArrayList<Character>();
+//         List<Character> tLSuits=new ArrayList<Character>();
+//         tVals=intList("1,2,3,4,5,6,7,8,9,10,11,12,13");
+//         tLVals=intList("1,2,3,4,5,6,7,8,9,10,11,12,13");
+//         tSuits=charList("HDSC");
+//         tLSuits=charList("HDSC");
+//         Rule sameSuitValue = new Rule(tSuits,tVals,tLSuits,tLVals,-1,-1,true,"");
+//         ruleList.add(sameSuitValue);
+        String fileName=getRulesFile();
+        int lines = countLines(fileName);
+        if(lines==-1){
+            try{
+                PrintWriter writer = new PrintWriter(fileName);
+                writer.println("HDSC");// triggerSuit      HDSC
+                writer.println("1,2,3,4,5,6,7,8,9,10,11,12,13");// triggerValue     1,2,3,...,11,12,13; 0=none
+                writer.println("HDSC");// triggerLastSuit  HDSC
+                writer.println("1,2,3,4,5,6,7,8,9,10,11,12,13");// triggerLastValue 1,2,3,...,11,12,13; 0=none
+                writer.println("-1");// triggerSameValue -1,0,1 different,ignore,same
+                writer.println("-1");// triggerSameSuit  -2,-1,0,1,2 !=color,!=suit,ignore,==suit,==color
+                writer.println("true");// and
+                writer.println("");// haveToSay
+                writer.println("");// triggerSuit      HDSC
+                writer.println("7");// triggerValue     1,2,3,...,11,12,13; 0=none
+                writer.println("");// triggerLastSuit  HDSC
+                writer.println("0");// triggerLastValue 1,2,3,...,11,12,13; 0=none
+                writer.println("0");// triggerSameValue -1,0,1 different,ignore,same
+                writer.println("0");// triggerSameSuit  -2,-1,0,1,2 !=color,!=suit,ignore,==suit,==color
+                writer.println("false");// and
+                writer.println("Have a nice day");// haveToSay
+                writer.println("S");// triggerSuit      HDSC
+                writer.println("0");// triggerValue     1,2,3,...,11,12,13; 0=none
+                writer.println("");// triggerLastSuit  HDSC
+                writer.println("0");// triggerLastValue 1,2,3,...,11,12,13; 0=none
+                writer.println("0");// triggerSameValue -1,0,1 different,ignore,same
+                writer.println("0");// triggerSameSuit  -2,-1,0,1,2 !=color,!=suit,ignore,==suit,==color
+                writer.println("false");// and
+                writer.println("*cName");// haveToSay
+                //writer.println("");// triggerSuit      HDSC
+                //writer.println("");// triggerValue     1,2,3,...,11,12,13; 0=none
+                //writer.println("");// triggerLastSuit  HDSC
+                //writer.println("");// triggerLastValue 1,2,3,...,11,12,13; 0=none
+                //writer.println("");// triggerSameValue -1,0,1 different,ignore,same
+                //writer.println("");// triggerSameSuit  -2,-1,0,1,2 !=color,!=suit,ignore,==suit,==color
+                //writer.println("");// and
+                //writer.println("");// haveToSay
+                writer.close();
+                lines=countLines(fileName);
+            }catch(FileNotFoundException error){}
+        }
+        for(int i=0;i<lines/8;i++){
+            int line=i*8;
+            List<Integer> tVals=new ArrayList<Integer>();
+            List<Integer> tLVals=new ArrayList<Integer>();
+            List<Character> tSuits=new ArrayList<Character>();
+            List<Character> tLSuits=new ArrayList<Character>();
+            tSuits=charList(readLine(fileName,line+1));
+            tVals=intList(readLine(fileName,line+2));
+            tLSuits=charList(readLine(fileName,line+3));
+            tLVals=intList(readLine(fileName,line+4));
+            int tSameVal = Integer.parseInt(readLine(fileName,line+5));
+            int tSameSuit = Integer.parseInt(readLine(fileName,line+6));
+            boolean and = Boolean.parseBoolean(readLine(fileName,line+7));
+            String haveToSay = readLine(fileName,line+8);
+            Rule newRule = new Rule(tSuits,tVals,tLSuits,tLVals,tSameVal,tSameSuit,and,haveToSay);
+            ruleList.add(newRule);
+        }
         if(game(cardList,handList,ruleList,deck,discard,players)) System.out.println("The game is a draw.");
     }
     public static List<Integer> intList(String ints){
@@ -164,8 +225,7 @@ public class Mao
         }
         if(!playedCard.equals("DRAW")){
             checkPlay(playedCard,cardList,hand,ruleList,deck,discard);
-            //System.out.println("Say anything? Asterisks the beginning signify knocking (e.g. \"** Hello.\")");
-            return/* input.next()*/;
+            return;
         }else{
             hand.draw(1,deck,discard);
             String cardIndex=hand.getCards().split(",")[hand.getCards().split(",").length-1];
@@ -183,14 +243,13 @@ public class Mao
                 }else System.out.println("Invalid response (no penalty). Please re-enter.");
             }
         }
-        //return input.next();
     }
     public static void checkPlay(String playedCard,List<Card> cardList,Hand hand,List<Rule> ruleList,Deck deck,Discard discard){
         Scanner input = new Scanner(System.in);
-        System.out.println("Say anything? Enter a period to say nothing.");
-        System.out.println("Asterisks the beginning signify knocking (e.g. \"** Hello.\").");
-        String said=input.next().toLowerCase();
-        if(said.equals(".")) said="";
+        System.out.println("Say anything? Press enter to say nothing.");
+        //System.out.println("Asterisks at the beginning signify knocking (e.g. \"** Hello.\").");
+        String said=input.nextLine().toLowerCase();
+        //if(said.equals(".")) said="";
         if(said.toLowerCase().contains(" mao")){
             hand.hasSaidMao=true;
             said=said.substring(0,said.indexOf(" mao"))+said.substring(said.indexOf(" mao")+4,said.length());
@@ -201,43 +260,46 @@ public class Mao
             hand.hasSaidMao=true;
             said=said.substring(0,said.indexOf("mao"))+said.substring(said.indexOf(" mao")+3,said.length());
         }
-        for(int ruleNum=0;ruleNum<ruleList.size();ruleNum++){
-            String cardIndex="none";
-            for(int i=0;i<52;i++){
-                if(cardList.get(i).name().equals(playedCard)){
-                    cardIndex=String.valueOf(i);
-                    i=52;
-                }
+        String cardIndex="none";
+        for(int i=0;i<52;i++){
+            if(cardList.get(i).name().equals(playedCard)){
+                cardIndex=String.valueOf(i);
+                i=52;
             }
-            int cIndex=Integer.parseInt(cardIndex);
+        }
+        int cIndex=Integer.parseInt(cardIndex);
+        boolean canPlay=true;
+        for(int ruleNum=0;ruleNum<ruleList.size();ruleNum++){
             if(!discard.cardAt(0).equals("D.N.E.")){
                 String[] ruleOut=ruleList.get(ruleNum).check(cardList.get(cIndex),cardList.get(Integer.parseInt(discard.cardAt(0))),said);
                 if(ruleOut[1].equals("true")){
                     hand.draw(1,deck,discard);
                 }
-                if(ruleOut[2].equals("true")){
-                    hand.play(cardIndex,discard);
-                }else{
-                    System.out.println("Improper play.");
+                if(ruleOut[2].equals("false")){
+                    canPlay=false;
+                    System.out.println("Improper play (card given).");
                     hand.draw(1,deck,discard);
                 }
+                said=ruleOut[0];
             }else{
                 String[] ruleOut=ruleList.get(ruleNum).check(cardList.get(cIndex),null,said);
                 if(ruleOut[1].equals("true")){
                     hand.draw(1,deck,discard);
                 }
-                if(ruleOut[2].equals("true")){
-                    hand.play(cardIndex,discard);
-                }else{
-                    System.out.println("Improper play.");
+                if(ruleOut[2].equals("false")){
+                    canPlay=false;
+                    System.out.println("Improper play (card given).");
                     hand.draw(1,deck,discard);
                 }
+                said=ruleOut[0];
             }
         }
-        if(!said.matches("\\w*")){
-            System.out.println("Speaking out of turn.");
+        if(!said.matches("[\\s\\.]*")){
+            System.out.println("Speaking out of turn (card given).");
             hand.draw(1,deck,discard);
         }
+        if(canPlay) hand.play(cardIndex,discard);
+        System.out.println("Press enter to continue.");
     }
     public static void cls(){
         try{
@@ -247,5 +309,55 @@ public class Mao
         }
         System.out.println("\033[2J\n");
         System.out.println("\f");
+    }
+    public static String readLine(String fileName,int lineNum){
+        File file = new File(fileName);
+        String line="";
+        try{
+            Scanner read = new Scanner(file);
+            int i=0;
+            while(read.hasNextLine()&&i<lineNum){
+                line=read.nextLine();
+                i++;
+            }
+            if(i<lineNum){
+                return "!line";
+            }
+        }catch(FileNotFoundException error){
+            return "!file";
+        }
+        return line;
+    }
+    public static int countLines(String fileName){
+        File file = new File(fileName);
+        String line;
+        int lines=0;
+        try{
+            Scanner read = new Scanner(file);
+            while(read.hasNextLine()){
+                line=read.nextLine();
+                lines++;
+            }
+        }catch(FileNotFoundException error){
+            return -1;
+        }
+        return lines;
+    }
+    public static String getRulesFile(){
+        Scanner input = new Scanner(System.in);
+        System.out.println("Use default rules? y/n");
+        String defRules="";
+        while(defRules.indexOf("y")!=0&&defRules.indexOf("n")!=0){
+            defRules=input.next();
+        }
+        String fileName="";
+        if(defRules.charAt(0)=='y'){
+            fileName="rules.txt";
+        }else{
+            while(!fileName.matches("\\w+\\.txt")){
+                fileName=input.next();
+            }
+        }
+        return fileName;
     }
 }

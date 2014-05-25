@@ -137,7 +137,7 @@ public class Rule
                     haveToSayTemp=played.fullName();
                     failedToSayStr=failedToSayStr+"name ";
                 }
-                failedToSayStr=failedToSayStr+"card.";
+                failedToSayStr=failedToSayStr+"card (card given).";
             }
             if(haveToSay.charAt(1)=='p'){
                 if(previous!=null){
@@ -153,18 +153,19 @@ public class Rule
                         haveToSayTemp=previous.fullName();
                         failedToSayStr=failedToSayStr+"name ";
                     }
-                    failedToSayStr=failedToSayStr+"previous card.";
+                    failedToSayStr=failedToSayStr+"previous card (card given).";
                 }else{
                     haveToSayTemp="";
                 }
             }
         }else{
-            failedToSayStr=failedToSayStr+"say "+haveToSayTemp;
+            failedToSayStr=failedToSayStr+"say \""+haveToSayTemp+".\"";
         }
         if (!haveToSayTemp.equals("")&&!said.toLowerCase().contains(haveToSayTemp.toLowerCase())){
             failureToSay=true;
-        }else if(said.toLowerCase().contains(haveToSayTemp)){
-            said=said.substring(0,said.indexOf(haveToSayTemp))+said.substring(said.indexOf(haveToSayTemp)+haveToSayTemp.length(),said.length());
+        }else if(said.toLowerCase().contains(haveToSayTemp.toLowerCase())){
+            int indOfStr=said.indexOf(haveToSayTemp.toLowerCase());
+            said=said.substring(0,indOfStr)+said.substring(indOfStr+haveToSayTemp.length(),said.length());
         }
         if(failureToSay){
             System.out.println(failedToSayStr);
