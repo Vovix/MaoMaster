@@ -110,7 +110,7 @@ public class Rule
      * @param  y   a sample parameter for a method
      * @return     the sum of x and y 
      */
-    public String[] check(Card played, Card previous, String said)
+    public String[] check(Card played, Card previous, String said, int prevSameVal)
     {
         boolean failureToSay=false;
         String haveToSayTemp;
@@ -159,7 +159,37 @@ public class Rule
                 }
             }
         }else{
-            failedToSayStr=failedToSayStr+"say \""+haveToSayTemp+".\"";
+            if(haveToSay.replaceAll("[^~]","").length()==2){
+                String[] haveToSaySplit=haveToSay.split("~");
+                if(haveToSaySplit.length==1){
+                    haveToSayTemp="";
+                    for(int i=0;i<prevSameVal;i++){
+                        haveToSayTemp=haveToSayTemp+haveToSaySplit[0];
+                    }
+                }
+                if(haveToSaySplit.length==2){
+                    if(haveToSay.indexOf("~")==0){
+                        haveToSayTemp="";
+                        for(int i=0;i<prevSameVal;i++){
+                            haveToSayTemp=haveToSayTemp+haveToSaySplit[0];
+                        }
+                        haveToSayTemp=haveToSayTemp+haveToSaySplit[1];
+                    }else{
+                        haveToSayTemp=haveToSaySplit[0];
+                        for(int i=0;i<prevSameVal;i++){
+                            haveToSayTemp=haveToSayTemp+haveToSaySplit[1];
+                        }
+                    }
+                }
+                if(haveToSaySplit.length==3){
+                    haveToSayTemp=haveToSaySplit[0];
+                    for(int i=0;i<prevSameVal;i++){
+                        haveToSayTemp=haveToSayTemp+haveToSaySplit[1];
+                    }
+                    haveToSayTemp=haveToSayTemp+haveToSaySplit[2];
+                }
+            }
+            failedToSayStr=failedToSayStr+"say \""+haveToSayTemp+"\" (card given).";
         }
         if (!haveToSayTemp.equals("")&&!said.toLowerCase().contains(haveToSayTemp.toLowerCase())){
             failureToSay=true;

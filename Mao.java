@@ -68,7 +68,7 @@ public class Mao
                 writer.println("0");// triggerSameValue -1,0,1 different,ignore,same
                 writer.println("0");// triggerSameSuit  -2,-1,0,1,2 !=color,!=suit,ignore,==suit,==color
                 writer.println("false");// and
-                writer.println("Have a nice day");// haveToSay
+                writer.println("Have a ~very ~nice day");// haveToSay
                 writer.println("S");// triggerSuit      HDSC
                 writer.println("0");// triggerValue     1,2,3,...,11,12,13; 0=none
                 writer.println("");// triggerLastSuit  HDSC
@@ -77,6 +77,14 @@ public class Mao
                 writer.println("0");// triggerSameSuit  -2,-1,0,1,2 !=color,!=suit,ignore,==suit,==color
                 writer.println("false");// and
                 writer.println("*cName");// haveToSay
+                writer.println("");// triggerSuit      HDSC
+                writer.println("0");// triggerValue     1,2,3,...,11,12,13; 0=none
+                writer.println("");// triggerLastSuit  HDSC
+                writer.println("0");// triggerLastValue 1,2,3,...,11,12,13; 0=none
+                writer.println("1");// triggerSameValue -1,0,1 different,ignore,same
+                writer.println("0");// triggerSameSuit  -2,-1,0,1,2 !=color,!=suit,ignore,==suit,==color
+                writer.println("false");// and
+                writer.println("~*~");// haveToSay
                 //writer.println("");// triggerSuit      HDSC
                 //writer.println("");// triggerValue     1,2,3,...,11,12,13; 0=none
                 //writer.println("");// triggerLastSuit  HDSC
@@ -238,7 +246,7 @@ public class Mao
     public static int checkPlay(String playedCard,List<Card> cardList,Hand hand,List<Hand> handList,List<Rule> ruleList,Deck deck,Discard discard,int players,int player){
         Scanner input = new Scanner(System.in);
         System.out.println("Say anything? Press enter to say nothing.");
-        //System.out.println("Asterisks at the beginning signify knocking (e.g. \"** Hello.\").");
+        System.out.println("Asterisks at the beginning signify knocking (e.g. \"** Hello.\").");
         String said=input.nextLine().toLowerCase();
         //if(said.equals(".")) said="";
         String cardIndex="none";
@@ -250,9 +258,19 @@ public class Mao
         }
         int cIndex=Integer.parseInt(cardIndex);
         boolean canPlay=true;
+        int prevSameVal=0;
+        for(int i=0;i<3;i++){
+            if(!discard.cardAt(i).equals("D.N.E.")){
+                if(cardList.get(cIndex).value()==cardList.get(Integer.parseInt(discard.cardAt(i))).value()){
+                    prevSameVal++;
+                }else{
+                    i=3;
+                }
+            }
+        }
         for(int ruleNum=0;ruleNum<ruleList.size();ruleNum++){
             if(!discard.cardAt(0).equals("D.N.E.")){
-                String[] ruleOut=ruleList.get(ruleNum).check(cardList.get(cIndex),cardList.get(Integer.parseInt(discard.cardAt(0))),said);
+                String[] ruleOut=ruleList.get(ruleNum).check(cardList.get(cIndex),cardList.get(Integer.parseInt(discard.cardAt(0))),said,prevSameVal);
                 if(ruleOut[1].equals("true")){
                     hand.draw(1,deck,discard);
                 }
@@ -263,7 +281,7 @@ public class Mao
                 }
                 said=ruleOut[0];
             }else{
-                String[] ruleOut=ruleList.get(ruleNum).check(cardList.get(cIndex),null,said);
+                String[] ruleOut=ruleList.get(ruleNum).check(cardList.get(cIndex),null,said,prevSameVal);
                 if(ruleOut[1].equals("true")){
                     hand.draw(1,deck,discard);
                 }
