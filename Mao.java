@@ -125,10 +125,20 @@ public class Mao
     }
     public static int getPlayers(Scanner input){
         System.out.println("How many (human) players?");
-        int players=input.nextInt();
+        String playersStr=input.next();
+        while(!playersStr.matches("\\d+")){
+            System.out.println("Please enter an integer.");
+            playersStr=input.next();
+        }
+        int players=Integer.parseInt(playersStr);
         while(players<1){
             System.out.println("There must be at least one human player.");
-            players=input.nextInt();
+            playersStr=input.next();
+            while(!playersStr.matches("\\d+")){
+                System.out.println("Please enter an integer.");
+                playersStr=input.next();
+            }
+            players=Integer.parseInt(playersStr);
         }
         return players+1; // +1 accounts for computer player
     }
@@ -315,8 +325,12 @@ public class Mao
             else Runtime.getRuntime().exec("clear");
         }catch(Exception error){
         }
-        System.out.println("\033[2J\n");
-        System.out.println("\f");
+        System.out.print("\u001b[2J");
+        if(System.console()!=null){
+            for(int i=0;i<50;i++) System.out.print("\n");
+        }else{
+            System.out.print("\f");
+        }
     }
     public static String readLine(String fileName,int lineNum){
         File file = new File(fileName);
@@ -353,6 +367,7 @@ public class Mao
     }
     public static String getRulesFile(){
         Scanner input = new Scanner(System.in);
+        cls();
         System.out.println("Use default rules? y/n");
         String defRules="";
         while(defRules.indexOf("y")!=0&&defRules.indexOf("n")!=0){
@@ -362,7 +377,10 @@ public class Mao
         if(defRules.charAt(0)=='y'){
             fileName="rules.txt";
         }else{
+            System.out.println("Use what file? Default rules will be added if file does not exist.");
+            fileName=input.next();
             while(!fileName.matches("\\w+\\.txt")){
+                System.out.println("Please enter a valid file name with the \".txt\" extension.");
                 fileName=input.next();
             }
         }
