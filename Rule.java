@@ -123,6 +123,15 @@ public class Rule
             res[2]="true";
             return res;
         }
+        said=said.replaceAll("(?i)two","2");
+        said=said.replaceAll("(?i)three","3");
+        said=said.replaceAll("(?i)four","4");
+        said=said.replaceAll("(?i)five","5");
+        said=said.replaceAll("(?i)six","6");
+        said=said.replaceAll("(?i)seven","7");
+        said=said.replaceAll("(?i)eight","8");
+        said=said.replaceAll("(?i)nine","9");
+        said=said.replaceAll("(?i)ten","10");
         if(haveToSay.matches("\\*[cp](Val|Suit|Name)")){
             if(haveToSay.charAt(1)=='c'){
                 if(haveToSay.charAt(2)=='V'){

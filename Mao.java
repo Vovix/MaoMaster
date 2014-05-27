@@ -75,6 +75,14 @@ public class Mao
                 writer.println("0");// triggerSameSuit  -2,-1,0,1,2 !=color,!=suit,ignore,==suit,==color
                 writer.println("false");// and
                 writer.println("~*~");// haveToSay
+                writer.println("");// triggerSuit      HDSC
+                writer.println("K");// triggerValue     1,2,3,...,11,12,13; 0=none
+                writer.println("");// triggerLastSuit  HDSC
+                writer.println("0");// triggerLastValue 1,2,3,...,11,12,13; 0=none
+                writer.println("0");// triggerSameValue -1,0,1 different,ignore,same
+                writer.println("0");// triggerSameSuit  -2,-1,0,1,2 !=color,!=suit,ignore,==suit,==color
+                writer.println("false");// and
+                writer.println("Hail to the king");// haveToSay
                 //writer.println("");// triggerSuit      HDSC
                 //writer.println("");// triggerValue     1,2,3,...,11,12,13; 0=none
                 //writer.println("");// triggerLastSuit  HDSC
