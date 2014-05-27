@@ -82,6 +82,7 @@ public class Hand
         discard.add(cardIndex);
     }
     public void reset(Deck deck,Discard discard){
+        hasSaidMao=false;
         size=0;
         cards="";
         draw(5,deck,discard);

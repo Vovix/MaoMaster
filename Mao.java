@@ -128,9 +128,10 @@ public class Mao
                 if(userInput.toLowerCase().charAt(0)=='y') playAgain=true;
                 else playAgain=false;
             }else{
-                userInput="";
-                while(userInput.toLowerCase().indexOf("y")!=0&&userInput.toLowerCase().indexOf("n")!=0){
-                    System.out.println("Play again?");
+                System.out.println("Play again?");
+                userInput=input.nextLine();
+                while(!userInput.matches("(?i)[yn].*")){
+                    System.out.println("y/n");
                     userInput=input.nextLine();
                 }
                 if(userInput.toLowerCase().charAt(0)=='y') playAgain=true;
@@ -141,7 +142,7 @@ public class Mao
                     cls();
                     System.out.println("-----RULE CREATION-----");
                     System.out.println();
-                    userInput="";
+                    userInput="@";
                     while(!userInput.toLowerCase().equals("any")&&!userInput.toLowerCase().equals("all")){
                         System.out.println("Will this rule trigger if ANY or ALL conditions are met?");
                         userInput=input.nextLine();
@@ -149,7 +150,7 @@ public class Mao
                     boolean and;
                     if(userInput.equals("all")) and=true;
                     else and=false;
-                    userInput="";
+                    userInput="@";
                     while(!userInput.toLowerCase().matches("(\\d{1,2}(,\\d{1,2})*|ignore)")){
                         System.out.println("What played card values will trigger this rule (1,2,...,13)?");
                         System.out.println("Enter \"ignore\" to skip checking.");
@@ -165,7 +166,7 @@ public class Mao
                     }else{
                         tPlV=userInput;
                     }
-                    userInput="";
+                    userInput="@";
                     while(!userInput.toLowerCase().matches("[hdsc]{0,4}")&&!userInput.toLowerCase().equals("ignore")){
                         System.out.println("What played card suits will trigger this rule (HDSC)?");
                         System.out.println("Enter \"ignore\" to skip checking.");
@@ -181,7 +182,7 @@ public class Mao
                     }else{
                         tPlS=userInput;
                     }
-                    userInput="";
+                    userInput="@";
                     while(!userInput.toLowerCase().matches("(\\d{1,2}(,\\d{1,2})*|ignore)")){
                         System.out.println("What previous card values will trigger this rule (1,2,...,13)?");
                         System.out.println("Enter \"ignore\" to skip checking.");
@@ -197,7 +198,7 @@ public class Mao
                     }else{
                         tPrV=userInput;
                     }
-                    userInput="";
+                    userInput="@";
                     while(!userInput.toLowerCase().matches("[hdsc]{0,4}")&&!userInput.toLowerCase().equals("ignore")){
                         System.out.println("What previous card suits will trigger this rule (HDSC)?");
                         System.out.println("Enter \"ignore\" to skip checking.");
@@ -213,14 +214,14 @@ public class Mao
                     }else{
                         tPrS=userInput;
                     }
-                    userInput="";
+                    userInput="@";
                     while(!userInput.matches("(-1|0|1)")){
                         System.out.println("Trigger when a played card has the same value as the previous card?");
                         System.out.println("-1=different   0=ignore   1=same");
                         userInput=input.nextLine();
                     }
                     int tSV=Integer.parseInt(userInput);
-                    userInput="";
+                    userInput="@";
                     while(!userInput.matches("(-2|-1|0|1|2)")){
                         System.out.println("Trigger when a played card is of the same suit as the previous card?");
                         System.out.println("-2=diff. color   -1=diff. suit   0=ignore   1=same suit   2=same color");
@@ -365,6 +366,7 @@ public class Mao
                     validAnswer=true;
                 }else if(answer.charAt(0)=='n'){
                     validAnswer=true;
+                    System.out.println("Press enter to continue.");
                 }else System.out.println("Invalid response (no penalty). Please re-enter.");
             }
         }

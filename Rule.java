@@ -178,7 +178,7 @@ public class Rule
                     haveToSayTemp=haveToSayTemp+haveToSaySplit[2];
                 }
             }
-            if(haveToSayTemp.matches("\\*+")) failedToSayStr=failedToSayStr+"say \""+haveToSayTemp+"\" (card given).";
+            if(!haveToSayTemp.matches("\\*+")) failedToSayStr=failedToSayStr+"say \""+haveToSayTemp+"\" (card given).";
             else failedToSayStr=failedToSayStr+"knock (card given).";
         }
         if (!haveToSayTemp.equals("")&&!said.toLowerCase().contains(haveToSayTemp.toLowerCase())){
