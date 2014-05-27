@@ -397,13 +397,25 @@ public class Mao
                 }
             }
         }
+        boolean forceValid=false;
+        for(int ruleNum=0;ruleNum<ruleList.size();ruleNum++){
+            if(!discard.cardAt(0).equals("D.N.E.")){
+                if(ruleList.get(ruleNum).forceValid(cardList.get(cIndex),cardList.get(Integer.parseInt(discard.cardAt(0))))){
+                    forceValid=true;
+                }
+            }else{
+                if(ruleList.get(ruleNum).forceValid(cardList.get(cIndex),null)){
+                    forceValid=true;
+                }
+            }
+        }
         for(int ruleNum=0;ruleNum<ruleList.size();ruleNum++){
             if(!discard.cardAt(0).equals("D.N.E.")){
                 String[] ruleOut=ruleList.get(ruleNum).check(cardList.get(cIndex),cardList.get(Integer.parseInt(discard.cardAt(0))),said,prevSameVal);
                 if(ruleOut[1].equals("true")){
                     hand.draw(1,deck,discard);
                 }
-                if(ruleOut[2].equals("false")){
+                if(ruleOut[2].equals("false")&&!forceValid){
                     canPlay=false;
                     System.out.println("Improper play (card given).");
                     hand.draw(1,deck,discard);
@@ -414,7 +426,7 @@ public class Mao
                 if(ruleOut[1].equals("true")){
                     hand.draw(1,deck,discard);
                 }
-                if(ruleOut[2].equals("false")){
+                if(ruleOut[2].equals("false")&&!forceValid){
                     canPlay=false;
                     System.out.println("Improper play (card given).");
                     hand.draw(1,deck,discard);

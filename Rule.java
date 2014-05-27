@@ -110,12 +110,18 @@ public class Rule
      * @param  y   a sample parameter for a method
      * @return     the sum of x and y 
      */
+    public boolean forceValid(Card played, Card previous){
+        if(trigger(played,previous)&&haveToSay.equals("*allow")){
+            return true;
+        }
+        return false;
+    }
     public String[] check(Card played, Card previous, String said, int prevSameVal)
     {
         boolean failureToSay=false;
         String haveToSayTemp;
         String failedToSayStr="Failure to ";
-        String[] res=new String[3];
+        String[] res=new String[4];
         haveToSayTemp=haveToSay;
         if (!trigger(played,previous)) {
             res[0]=said;
@@ -208,7 +214,7 @@ public class Rule
                     }
                 }
                 System.out.println(" (card given).");
-            }else System.out.println(failedToSayStr);
+            }else if(!haveToSay.equals("*allow")) System.out.println(failedToSayStr);
         }
         while(said.contains("  ")){
             said=said.substring(0,said.indexOf("  "))+" "+said.substring(said.indexOf("  ")+2,said.length());
@@ -218,6 +224,12 @@ public class Rule
             res[0]=said;
             res[1]="false";
             res[2]="false"; // {said,draw,valid play} all triggers mean invalid plays
+            return res;
+        }
+        if(haveToSay.equals("*allow")){
+            res[0]=said;
+            res[1]="false";
+            res[2]="true";
             return res;
         }
         res[0]=said;
