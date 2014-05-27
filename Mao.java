@@ -38,16 +38,6 @@ public class Mao
             handList.add(newHand);
         }
         List<Rule> ruleList = new ArrayList<Rule>();
-//         List<Integer> tVals=new ArrayList<Integer>();
-//         List<Integer> tLVals=new ArrayList<Integer>();
-//         List<Character> tSuits=new ArrayList<Character>();
-//         List<Character> tLSuits=new ArrayList<Character>();
-//         tVals=intList("1,2,3,4,5,6,7,8,9,10,11,12,13");
-//         tLVals=intList("1,2,3,4,5,6,7,8,9,10,11,12,13");
-//         tSuits=charList("HDSC");
-//         tLSuits=charList("HDSC");
-//         Rule sameSuitValue = new Rule(tSuits,tVals,tLSuits,tLVals,-1,-1,true,"");
-//         ruleList.add(sameSuitValue);
         String fileName=getRulesFile();
         int lines = countLines(fileName);
         if(lines==-1){
@@ -114,7 +104,136 @@ public class Mao
             Rule newRule = new Rule(tSuits,tVals,tLSuits,tLVals,tSameVal,tSameSuit,and,haveToSay);
             ruleList.add(newRule);
         }
-        if(game(cardList,handList,ruleList,deck,discard,players)) System.out.println("The game is a draw.");
+        boolean playAgain=true;
+        while(playAgain){
+            String userInput;
+            deck.reset();
+            discard.reset();
+            for(int i=0;i<players;i++) handList.get(i).reset(deck,discard);
+            if(game(cardList,handList,ruleList,deck,discard,players).equals("draw")){
+                System.out.println("The game is a draw.");
+                userInput="";
+                while(userInput.toLowerCase().indexOf("y")!=0&&userInput.toLowerCase().indexOf("n")!=0){
+                    System.out.println("Play again?");
+                    userInput=input.nextLine();
+                }
+                if(userInput.toLowerCase().charAt(0)=='y') playAgain=true;
+                else playAgain=false;
+            }else{
+                userInput="";
+                while(userInput.toLowerCase().indexOf("y")!=0&&userInput.toLowerCase().indexOf("n")!=0){
+                    System.out.println("Play again?");
+                    userInput=input.nextLine();
+                }
+                if(userInput.toLowerCase().charAt(0)=='y') playAgain=true;
+                else playAgain=false;
+                if(playAgain){
+                    System.out.println("The winner may add a rule.");
+                    while(input.nextLine()==null);
+                    cls();
+                    System.out.println("-----RULE CREATION-----");
+                    System.out.println();
+                    userInput="";
+                    while(!userInput.toLowerCase().equals("any")&&!userInput.toLowerCase().equals("all")){
+                        System.out.println("Will this rule trigger if ANY or ALL conditions are met?");
+                        userInput=input.nextLine();
+                    }
+                    boolean and;
+                    if(userInput.equals("all")) and=true;
+                    else and=false;
+                    userInput="";
+                    while(!userInput.toLowerCase().matches("(\\d{1,2}(,\\d{1,2})*|ignore)")){
+                        System.out.println("What played card values will trigger this rule (1,2,...,13)?");
+                        System.out.println("Enter \"ignore\" to skip checking.");
+                        userInput=input.nextLine();
+                    }
+                    String tPlV;
+                    if(userInput.equals("ignore")){
+                        if(and){
+                            tPlV="1,2,3,4,5,6,7,8,9,10,11,12,13";
+                        }else{
+                            tPlV="0";
+                        }
+                    }else{
+                        tPlV=userInput;
+                    }
+                    userInput="";
+                    while(!userInput.toLowerCase().matches("[hdsc]{0,4}")&&!userInput.toLowerCase().equals("ignore")){
+                        System.out.println("What played card suits will trigger this rule (HDSC)?");
+                        System.out.println("Enter \"ignore\" to skip checking.");
+                        userInput=input.nextLine();
+                    }
+                    String tPlS;
+                    if(userInput.equals("ignore")){
+                        if(and){
+                            tPlS="HDSC";
+                        }else{
+                            tPlS="";
+                        }
+                    }else{
+                        tPlS=userInput;
+                    }
+                    userInput="";
+                    while(!userInput.toLowerCase().matches("(\\d{1,2}(,\\d{1,2})*|ignore)")){
+                        System.out.println("What previous card values will trigger this rule (1,2,...,13)?");
+                        System.out.println("Enter \"ignore\" to skip checking.");
+                        userInput=input.nextLine();
+                    }
+                    String tPrV;
+                    if(userInput.equals("ignore")){
+                        if(and){
+                            tPrV="1,2,3,4,5,6,7,8,9,10,11,12,13";
+                        }else{
+                            tPrV="0";
+                        }
+                    }else{
+                        tPrV=userInput;
+                    }
+                    userInput="";
+                    while(!userInput.toLowerCase().matches("[hdsc]{0,4}")&&!userInput.toLowerCase().equals("ignore")){
+                        System.out.println("What previous card suits will trigger this rule (HDSC)?");
+                        System.out.println("Enter \"ignore\" to skip checking.");
+                        userInput=input.nextLine();
+                    }
+                    String tPrS;
+                    if(userInput.equals("ignore")){
+                        if(and){
+                            tPrS="HDSC";
+                        }else{
+                            tPrS="";
+                        }
+                    }else{
+                        tPrS=userInput;
+                    }
+                    userInput="";
+                    while(!userInput.matches("(-1|0|1)")){
+                        System.out.println("Trigger when a played card has the same value as the previous card?");
+                        System.out.println("-1=different   0=ignore   1=same");
+                        userInput=input.nextLine();
+                    }
+                    int tSV=Integer.parseInt(userInput);
+                    userInput="";
+                    while(!userInput.matches("(-2|-1|0|1|2)")){
+                        System.out.println("Trigger when a played card is of the same suit as the previous card?");
+                        System.out.println("-2=diff. color   -1=diff. suit   0=ignore   1=same suit   2=same color");
+                        userInput=input.nextLine();
+                    }
+                    int tSS=Integer.parseInt(userInput);
+                    System.out.println("Make the user say anything when this rule is triggered?");
+                    System.out.println("Enter \"*cVal,\" \"*cSuit,\" \"*cName,\" \"*pVal,\" \"*pSuit,\" or \"*pName\"");
+                    System.out.println("to indicate the [card's] or [previous card's] [value], [suit], or [full name].");
+                    System.out.println("Do not use these keywords in conjunction with additional words.");
+                    System.out.println("If keywords are not used, tildes may be used to offset repeated content");
+                    System.out.println("dependent on the number of consecutive cards of the same value");
+                    System.out.println("(i.e., \"I ~really ~like ice cream\" will require \"really\" 0-3 times).");
+                    System.out.println("Press enter to skip. Doing so will make the rule invalidate plays.");
+                    String hTS=input.nextLine();
+                    Rule customRule = new Rule(charList(tPlS),intList(tPlV),charList(tPrS),intList(tPrV),tSV,tSS,and,hTS);
+                    ruleList.add(customRule);
+                }
+            }
+            cls();
+        }
     }
     public static List<Integer> intList(String ints){
         List<Integer> list = new ArrayList<Integer>();
@@ -159,9 +278,9 @@ public class Mao
         }
         return dif;
     }
-    public static boolean game(List<Card> cardList,List<Hand> handList,List<Rule> ruleList,Deck deck,Discard discard,int players){
+    public static String game(List<Card> cardList,List<Hand> handList,List<Rule> ruleList,Deck deck,Discard discard,int players){
         Scanner input = new Scanner(System.in);
-        if(deck.discardTop(discard)) return true;
+        if(deck.discardTop(discard)) return "draw";
         int playerOutOfCards=-1;
         while(playerOutOfCards==-1){
             for(int i=0;i<players;i++){
@@ -171,7 +290,7 @@ public class Mao
                 while(input.nextLine()==null);
             }
         }
-        return false;
+        return String.valueOf(playerOutOfCards);
     }
     public static int checkHands(List<Card> cardList,List<Hand> handList,int players){
         for(int i=0;i<players;i++){
@@ -246,7 +365,7 @@ public class Mao
     public static int checkPlay(String playedCard,List<Card> cardList,Hand hand,List<Hand> handList,List<Rule> ruleList,Deck deck,Discard discard,int players,int player){
         Scanner input = new Scanner(System.in);
         System.out.println("Say anything? Press enter to say nothing.");
-        System.out.println("Asterisks at the beginning signify knocking (e.g. \"** Hello.\").");
+        System.out.println("Asterisks signify knocking (e.g. \"** Hello.\").");
         String said=input.nextLine().toLowerCase();
         //if(said.equals(".")) said="";
         String cardIndex="none";
@@ -331,8 +450,14 @@ public class Mao
             handList.get(index).hasSaidMao=false;
         }
         if(!said.matches("[\\s\\.]*")){
-            System.out.println("Speaking out of turn (card given).");
-            hand.draw(1,deck,discard);
+            if(said.contains("*")){
+                System.out.println("Improper knocking (card given).");
+                hand.draw(1,deck,discard);
+            }
+            if(!said.matches("[\\s\\.\\*]*")){
+                System.out.println("Speaking out of turn (card given).");
+                hand.draw(1,deck,discard);
+            }
         }
         System.out.println("Press enter to continue.");
         return -1;

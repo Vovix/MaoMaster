@@ -76,4 +76,8 @@ public class Discard
             return "D.N.E.";
         }
     }
+    public void reset(){
+        size=0;
+        cards="";
+    }
 }

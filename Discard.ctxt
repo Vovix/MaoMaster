@@ -13,4 +13,6 @@ comment4.params=
 comment4.target=java.lang.String\ addToDeck()
 comment5.params=index
 comment5.target=java.lang.String\ cardAt(int)
-numComments=6
+comment6.params=
+comment6.target=void\ reset()
+numComments=7

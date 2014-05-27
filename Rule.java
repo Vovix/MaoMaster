@@ -161,35 +161,16 @@ public class Rule
         }else{
             if(haveToSay.replaceAll("[^~]","").length()==2){
                 String[] haveToSaySplit=haveToSay.split("~");
-                if(haveToSaySplit.length==1){
-                    haveToSayTemp="";
-                    for(int i=0;i<prevSameVal;i++){
-                        haveToSayTemp=haveToSayTemp+haveToSaySplit[0];
-                    }
-                }
-                if(haveToSaySplit.length==2){
-                    if(haveToSay.indexOf("~")==0){
-                        haveToSayTemp="";
-                        for(int i=0;i<prevSameVal;i++){
-                            haveToSayTemp=haveToSayTemp+haveToSaySplit[0];
-                        }
-                        haveToSayTemp=haveToSayTemp+haveToSaySplit[1];
-                    }else{
-                        haveToSayTemp=haveToSaySplit[0];
-                        for(int i=0;i<prevSameVal;i++){
-                            haveToSayTemp=haveToSayTemp+haveToSaySplit[1];
-                        }
-                    }
+                haveToSayTemp=haveToSaySplit[0];
+                for(int i=0;i<prevSameVal;i++){
+                    haveToSayTemp=haveToSayTemp+haveToSaySplit[1];
                 }
                 if(haveToSaySplit.length==3){
-                    haveToSayTemp=haveToSaySplit[0];
-                    for(int i=0;i<prevSameVal;i++){
-                        haveToSayTemp=haveToSayTemp+haveToSaySplit[1];
-                    }
                     haveToSayTemp=haveToSayTemp+haveToSaySplit[2];
                 }
             }
-            failedToSayStr=failedToSayStr+"say \""+haveToSayTemp+"\" (card given).";
+            if(haveToSayTemp.matches("\\*+")) failedToSayStr=failedToSayStr+"say \""+haveToSayTemp+"\" (card given).";
+            else failedToSayStr=failedToSayStr+"knock (card given).";
         }
         if (!haveToSayTemp.equals("")&&!said.toLowerCase().contains(haveToSayTemp.toLowerCase())){
             failureToSay=true;
@@ -198,7 +179,27 @@ public class Rule
             said=said.substring(0,indOfStr)+said.substring(indOfStr+haveToSayTemp.length(),said.length());
         }
         if(failureToSay){
-            System.out.println(failedToSayStr);
+            if(haveToSayTemp.matches("\\*+")){
+                System.out.print("Failure to knock");
+                if(prevSameVal==2){
+                    System.out.print(" twice");
+                    if(said.contains("*")){
+                        int asterInd=said.indexOf("*");
+                        said=said.substring(0,asterInd)+said.substring(asterInd+1,said.length());
+                    }
+                }
+                if(prevSameVal==3){
+                    System.out.print(" three times");
+                    if(said.contains("**")){
+                        int asterInd=said.indexOf("**");
+                        said=said.substring(0,asterInd)+said.substring(asterInd+2,said.length());
+                    }else if(said.contains("*")){
+                        int asterInd=said.indexOf("*");
+                        said=said.substring(0,asterInd)+said.substring(asterInd+1,said.length());
+                    }
+                }
+                System.out.println(" (card given).");
+            }else System.out.println(failedToSayStr);
         }
         while(said.contains("  ")){
             said=said.substring(0,said.indexOf("  "))+" "+said.substring(said.indexOf("  ")+2,said.length());

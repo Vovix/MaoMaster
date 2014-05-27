@@ -117,4 +117,12 @@ public class Deck
         discard.add(card);
         return false;
     }
+    public void reset(){
+        size=52;
+        cards="0";
+        for(int i=1;i<52;i++){
+            cards=cards+","+i;
+        }
+        shuffle();
+    }
 }
