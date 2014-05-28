@@ -18,9 +18,21 @@ public class Mao
     public static void main(String[] args){
         Scanner input = new Scanner(System.in);
         cls();
+        String cPly="";
+        boolean compPlay;
+        System.out.println("Include a computer player?");
+        while(cPly.indexOf('y')!=0&&cPly.indexOf('n')!=0){
+            cPly=input.nextLine();
+        }
+        if(cPly.charAt(0)=='y'){
+            compPlay=true;
+        }else{
+            compPlay=false;
+        }
         int players = getPlayers(input); // asks for human players, returns all (including computer)
         cls();
-        char difficulty = getDifficulty(input); // e = easy, m = medium, h = hard
+        char difficulty;
+        if(compPlay) difficulty = getDifficulty(input); // e = easy, m = medium, h = hard
         // create 52 cards
         List<Card> cardList = new ArrayList<Card>();
         for(int i=0;i<52;i++){
@@ -76,7 +88,7 @@ public class Mao
                 writer.println("false");// and
                 writer.println("~*~");// haveToSay
                 writer.println("");// triggerSuit      HDSC
-                writer.println("K");// triggerValue     1,2,3,...,11,12,13; 0=none
+                writer.println("13");// triggerValue     1,2,3,...,11,12,13; 0=none
                 writer.println("");// triggerLastSuit  HDSC
                 writer.println("0");// triggerLastValue 1,2,3,...,11,12,13; 0=none
                 writer.println("0");// triggerSameValue -1,0,1 different,ignore,same
